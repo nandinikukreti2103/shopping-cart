@@ -26,13 +26,15 @@ public class ProductController {
     @GetMapping
     public ApiResponse getAllProducts() {
         List<Product> allProducts = productService.getAllProducts();
-        return new ApiResponse(true,"products Found",allProducts);
+        List<ProductDto> convertedProducts = productService.getConvertedProducts(allProducts);
+        return new ApiResponse(true,"products Found",convertedProducts);
     }
 
     @GetMapping("/product/{productId}")
     public ApiResponse getProductById(@PathVariable("productId") Long productId) {
             Product product = productService.getProductById(productId);
-        return new ApiResponse(true,"Found",product);
+            ProductDto productDto = productService.convertToDto(product);
+        return new ApiResponse(true,"Found",productDto);
     }
 
     @PutMapping("/update/{productId}")
@@ -52,20 +54,23 @@ public class ProductController {
             @RequestParam(required = false) String brand,
             @RequestParam(required = false) String name) {
         List<Product> products = productService.getProductsByBrandAndName(brand, name);
-        return new ApiResponse(true,"Success",products);
+        List<ProductDto> productDtoList = productService.getConvertedProducts(products);
+        return new ApiResponse(true,"Success",productDtoList);
     }
 
     @GetMapping("/category")
     public ApiResponse getProductsByCategoryName(@RequestParam String category) {
         List<Product> products = productService.getProductsByCategory(category);
-        return new ApiResponse(true,"Success",products);
+        List<ProductDto> productDtoList = productService.getConvertedProducts(products);
+        return new ApiResponse(true,"Success",productDtoList);
     }
 
 
     @GetMapping("/brand")
     public ApiResponse getProductsByBrandName(@RequestParam String brand) {
         List<Product> products = productService.getProductsByBrand(brand);
-        return new ApiResponse(true,"Success",products);
+        List<ProductDto> productDtoList = productService.getConvertedProducts(products);
+        return new ApiResponse(true,"Success",productDtoList);
     }
 
     @GetMapping("/category/brand")
@@ -74,7 +79,8 @@ public class ProductController {
             if(products.isEmpty()){
                 return new ApiResponse(false,"product not found!",null);
             }
-            return new ApiResponse(true,"success!", products);
+            List<ProductDto> productDtoList = productService.getConvertedProducts(products);
+            return new ApiResponse(true,"success!", productDtoList);
     }
 
     @GetMapping("/name")
@@ -83,9 +89,7 @@ public class ProductController {
         if (products.isEmpty()) {
             return new ApiResponse(false, "no product found!", null);
         }
-        return new ApiResponse(true, "success!", products);
+        List<ProductDto> productDtoList = productService.getConvertedProducts(products);
+        return new ApiResponse(true, "success!", productDtoList);
     }
-
-
-
 }
